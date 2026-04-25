@@ -3,20 +3,34 @@
 // Test
 int main()
 {
-    int a;
-    a = 1;
-    int b;
-    b = 2;
+    int a = 1;
+    int b = 2;
+    int c = 0;
 
-    int c;
     c = a + b;    
     std::cout << a << " + " << b << " = " << c << '\n';
     
-    int d;
-    d = a - b;    
-    std::cout << a << " - " << b << " = " << d << '\n';
+    c = a - b;    
+    std::cout << a << " - " << b << " = " << c << '\n';
     
-    int e;
-    e = a * b;    
-    std::cout << a << " * " << b << " = " << e << '\n';
+    c = a * b;    
+    std::cout << a << " * " << b << " = " << c << '\n';
+
+    if(b != 0)
+    {
+    	c = a / b;
+	std::cout << a << " / " << b << " = " << c << '\n';
+    }
+    else
+    {
+	std::cout << "Error! Division by zero is not allowed"; 
+    }
+
+    c = 1;
+    for (int i = 0; i < b; ++i)
+    {
+	c = c * a;
+    }
+    std::cout << a << " ^ " << b << " = " << c << '\n';
+
 }
