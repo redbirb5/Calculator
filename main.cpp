@@ -1,29 +1,59 @@
 #include <iostream>
 
-// Test
+int addition(int a, int b)
+{
+    return a + b;
+}
+
+int substraction(int a, int b)
+{
+    return a - b;
+}
+
+int multiplication(int a, int b)
+{
+    return a * b;
+}
+
+int division(int a, int b, int& c)
+{
+    if(b == 0)
+    {
+	return -1;
+    }
+    c = a / b;
+    return 0;
+}
+
+void printPesult(int a, int b, int c, char operation)
+{
+     std::cout << a << operation << b << " = " << c << '\n';
+}
+
 int main()
 {
     int a = 1;
     int b = 2;
     int c = 0;
 
-    c = a + b;    
-    std::cout << a << " + " << b << " = " << c << '\n';
+    c = addition(a, b);
+    printResult(a, b ,c, '+');
     
-    c = a - b;    
-    std::cout << a << " - " << b << " = " << c << '\n';
+    c = substraction(a, b);    
+    printResult(a, b ,c, '-');
     
-    c = a * b;    
-    std::cout << a << " * " << b << " = " << c << '\n';
-
-    if(b != 0)
+    c = multiplication(a, b);
+    printResult(a, b ,c, '*');
+	
+    int status = 0;
+    status = division(a, b, c);
+    if(status)
     {
-    	c = a / b;
-	std::cout << a << " / " << b << " = " << c << '\n';
+	printResult(a, b, c, '/');
     }
     else
     {
-	std::cout << "Error! Division by zero is not allowed"; 
+	 std::cout << "Error! Division by zero is not allowed";
     }
 
     c = 1;
