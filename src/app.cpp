@@ -1,9 +1,12 @@
 #include "app.h"
+
 #include "libmath.h"
+
+#include <string.h>
+#include <unistd.h>
 
 #include <cstdio>
 #include <cstdlib>
-#include <unistd.h>
 
 namespace
 {
@@ -21,63 +24,93 @@ void parse(int argc, char** argv, Task& task)
 {
     int opt;
 
-    while ((opt = getopt(argc, argv, "asmdpf") != -1) {
-switch (opt) {
-case 'a': task.operation = '+'; break;
-case 's': task.operation = '-'; break;
-            case 'm': task.operation = '*'; break;
-            case 'd': task.operation = '/'; break;
-            case 'p': task.operation = '^'; break;
-            case 'f': task.operation = '!'; break;
-            default: task.operation = '?'; return;
-}
-}
-	
-    if(task.operation == '!'){
-    task.value1 = atoi(argv[optind]);
+    while ((opt = getopt(argc, argv, "hasmdpf")) != -1)
+    {
+        switch (opt)
+        {
+            case 'h':
+                task.operation = '+';
+                break;
+            case 'a':
+                task.operation = '+';
+                break;
+            case 's':
+                task.operation = '-';
+                break;
+            case 'm':
+                task.operation = '*';
+                break;
+            case 'd':
+                task.operation = '/';
+                break;
+            case 'p':
+                task.operation = '^';
+                break;
+            case 'f':
+                task.operation = '!';
+                break;
+            default:
+                task.operation = '?';
+                return;
+        }
     }
-    else {
-    task.value1 = atoi(argv[optind]);
-    task.value2 = atoi(argv[optint + 1]);
-    }    
+
+    if (task.operation == '!')
+    {
+        task.value1 = atoi(argv[optind]);
+    }
+    else
+    {
+        task.value1 = atoi(argv[optind]);
+        task.value2 = atoi(argv[optind + 1]);
+    }
 }
 
 void calculate(Task& task)
 {
     task.status = 0;
-    switch(task.operation)
+    switch (task.operation)
     {
         case '+':
-                task.status = libmath::addition(task.value1, task.value2, task.result);
-                break;
+            task.status =
+                libmath::addition(task.value1, task.value2, task.result);
+            break;
         case '-':
-                task.status = libmath::subtraction(task.value1, task.value2, task.result);
-                break;
+            task.status =
+                libmath::subtraction(task.value1, task.value2, task.result);
+            break;
         case '*':
-                task.status = libmath::multiplication(task.value1, task.value2, task.result);
-                break;
+            task.status =
+                libmath::multiplication(task.value1, task.value2, task.result);
+            break;
         case '/':
-                task.status = libmath::division(task.value1, task.value2, task.result);
-                break;
+            task.status =
+                libmath::division(task.value1, task.value2, task.result);
+            break;
         case '^':
-                task.status = libmath::power(task.value1, task.value2, task.result);
-                break;
+            task.status = libmath::power(task.value1, task.value2, task.result);
+            break;
+        case '!':
+            task.status = libmath::factorial(task.value1, task.result);
+            break;
         default:
-                task.status = 1;
-
+            task.status = 1;
     }
 }
 
 void output(Task task)
 {
-    if(task.status == 0)
+    if (task.status == 0)
     {
-	if(task.operation == '!')
-	{
-		printf("%d! = %d\n", task.value1, task.result);
-	}else {
-             printf("%d %c %d = %d\n", task.value1, task.operation, task.value2, task.result);
-	}
+        if (task.operation == '!')
+        {
+            printf("%d! = %d\n", task.value1, task.result);
+        }
+        else
+        {
+            printf("%d %c %d = %d\n", task.value1, task.operation, task.value2,
+                   task.result);
+        }
     }
     else if (task.status == -1)
     {
@@ -105,17 +138,62 @@ void output(Task task)
     }
 }
 
+bool isHelpRequested(int argc, char** argv)
+{
+    for (int i = 1; i < argc; ++i)
+    {
+        if (strcmp(argv[i], "-h") == 0)
+        {
+            return true;
+        }
+    }
+    return false;
 }
+
+void printHelp()
+{
+    const char help[] =
+        "Usage:\n"
+        "  calculator [options] <value1> <value2>\n\n"
+        "Options:\n"
+        "  -a    Add\n"
+        "  -s    Subtract\n"
+        "  -m    Multiply\n"
+        "  -d    Divide\n"
+        "  -p    Power\n"
+        "  -f    Factorial (one argument)\n"
+        "  -h    Show help\n\n"
+        "Notes:\n"
+        "  Use \"--\" once to stop option parsing if arguments are negative numbers '-'\n"
+        "  All arguments after \"--\" are treated as values.\n"
+        "  Example: calculator -s -- 5 -2\n\n"
+        "Examples:\n"
+        "  calculator -a 1 2        -> 1 + 2 = 3\n"
+        "  calculator -s -- -5 -2   -> -5 - -2 = -3\n"
+        "  calculator -m 3 4        -> 3 * 4 = 12\n"
+        "  calculator -d 10 2       -> 10 / 2 = 5\n"
+        "  calculator -p 2 3        -> 2 ^ 3 = 8\n"
+        "  calculator -f 3          -> 3! = 6\n";
+
+    write(STDOUT_FILENO, help, sizeof(help) - 1);
+}
+} // namespace
 
 namespace app
 {
 
 void run(int argc, char** argv)
 {
+    if (isHelpRequested(argc, argv))
+    {
+        printHelp();
+        return;
+    }
+
     Task task;
     parse(argc, argv, task);
     calculate(task);
     output(task);
 }
 
-}
+} // namespace app

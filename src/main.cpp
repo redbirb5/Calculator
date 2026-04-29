@@ -2,5 +2,5 @@
 
 int main(int argc, char** argv)
 {
-    app::run(argc, argv);   
+    app::run(argc, argv);
 }
