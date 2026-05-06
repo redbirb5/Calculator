@@ -2,8 +2,9 @@
 
 #include "libmath.h"
 
+#include <getopt.h>
 #include <string.h>
-#inclide <getopt.h>
+#include <unistd.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -22,21 +23,21 @@ struct Task
 
 void parse(int argc, char** argv, Task& task)
 {
-    const option long_options[] = {
-        {"help", no_argument, nullptr, 'h'},
-        {"add", no_argument, nullptr, 'a'},
-        {"subtract", no_argument, nullptr, 's'},
-        {"multiply", no_argument, nullptr, 'm'},
-        {"divide", no_argument, nullptr, 'd'},
-        {"power", no_argument, nullptr, 'p'},
-        {"factorial", no_argument, nullptr, 'f'},
-        {nullptr, 0, nullptr, 0}
-    };
-	
+    const option long_options[] = {{"help", no_argument, nullptr, 'h'},
+                                   {"add", no_argument, nullptr, 'a'},
+                                   {"subtract", no_argument, nullptr, 's'},
+                                   {"multiply", no_argument, nullptr, 'm'},
+                                   {"divide", no_argument, nullptr, 'd'},
+                                   {"power", no_argument, nullptr, 'p'},
+                                   {"factorial", no_argument, nullptr, 'f'},
+                                   {nullptr, 0, nullptr, 0}};
+
     int opt;
     int option_index = 0;
 
-    while ((opt = getopt_long(argc, argv, "hasmdpf", long_options, &option_index)) != -1)
+    // NOLINTNEXTLINE(altera-unroll-loops)
+    while ((opt = getopt_long(argc, argv, "hasmdpf", long_options,
+                              &option_index)) != -1)
     {
         switch (opt)
         {
@@ -152,6 +153,7 @@ void output(Task task)
 
 bool isHelpRequested(int argc, char** argv)
 {
+#pragma unroll 3
     for (int i = 1; i < argc; ++i)
     {
         if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
