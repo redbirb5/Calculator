@@ -23,8 +23,7 @@ struct Task
 
 void parse(int argc, char** argv, Task& task)
 {
-    const option long_options[] = {{"help", no_argument, nullptr, 'h'},
-                                   {"add", no_argument, nullptr, 'a'},
+    const option long_options[] = {{"add", no_argument, nullptr, 'a'},
                                    {"subtract", no_argument, nullptr, 's'},
                                    {"multiply", no_argument, nullptr, 'm'},
                                    {"divide", no_argument, nullptr, 'd'},
@@ -35,33 +34,51 @@ void parse(int argc, char** argv, Task& task)
     int opt;
     int option_index = 0;
 
+    bool operation_found = false;
+
     // NOLINTNEXTLINE(altera-unroll-loops)
-    while ((opt = getopt_long(argc, argv, "hasmdpf", long_options,
+    while ((opt = getopt_long(argc, argv, "asmdpf", long_options,
                               &option_index)) != -1)
     {
         switch (opt)
         {
-            case 'h':
-                task.operation = 'h';
-                break;
             case 'a':
-                task.operation = '+';
-                break;
             case 's':
-                task.operation = '-';
-                break;
             case 'm':
-                task.operation = '*';
-                break;
             case 'd':
-                task.operation = '/';
-                break;
             case 'p':
-                task.operation = '^';
-                break;
             case 'f':
-                task.operation = '!';
+                if (operation_found)
+                {
+                    task.operation = '?';
+                    return;
+                }
+
+                operation_found = true;
+                switch (opt)
+                {
+                    case 'a':
+                        task.operation = '+';
+                        break;
+                    case 's':
+                        task.operation = '-';
+                        break;
+                    case 'm':
+                        task.operation = '*';
+                        break;
+                    case 'd':
+                        task.operation = '/';
+                        break;
+                    case 'p':
+                        task.operation = '^';
+                        break;
+                    case 'f':
+                        task.operation = '!';
+                        break;
+                }
+
                 break;
+
             default:
                 task.operation = '?';
                 return;
@@ -168,29 +185,39 @@ void printHelp()
 {
     const char help[] =
         "Usage:\n"
-        "  calculator [options] <value1> <value2>\n\n"
+        "  calculator [option] <value1> <value2>\n"
+        "  calculator -f <value>\n"
+        "  calculator --factorial <value>\n\n"
         "Options:\n"
-        "  -a    Add\n"
-        "  -s    Subtract\n"
-        "  -m    Multiply\n"
-        "  -d    Divide\n"
-        "  -p    Power\n"
-        "  -f    Factorial (one argument)\n"
-        "  -h    Show help\n\n"
+        "  -a, --add          Add\n"
+        "  -s, --subtract     Subtract\n"
+        "  -m, --multiply     Multiply\n"
+        "  -d, --divide       Divide\n"
+        "  -p, --power        Power\n"
+        "  -f, --factorial    Factorial (one argument)\n"
+        "  -h, --help         Show help\n\n"
         "Notes:\n"
-        "  Use \"--\" once to stop option parsing if arguments are negative numbers '-'\n"
+        "  Use \"--\" once to stop option parsing if arguments are negative numbers.\n"
         "  All arguments after \"--\" are treated as values.\n"
-        "  Example: calculator -s -- 5 -2\n\n"
+        "  Example: calculator -s -- -5 -2\n"
+        "  Example: calculator --subtract -- -5 -2\n\n"
         "Examples:\n"
-        "  calculator -a 1 2        -> 1 + 2 = 3\n"
-        "  calculator -s -- -5 -2   -> -5 - -2 = -3\n"
-        "  calculator -m 3 4        -> 3 * 4 = 12\n"
-        "  calculator -d 10 2       -> 10 / 2 = 5\n"
-        "  calculator -p 2 3        -> 2 ^ 3 = 8\n"
-        "  calculator -f 3          -> 3! = 6\n";
+        "  calculator -a 1 2              -> 1 + 2 = 3\n"
+        "  calculator --add 1 2           -> 1 + 2 = 3\n"
+        "  calculator -s -- -5 -2         -> -5 - -2 = -3\n"
+        "  calculator --subtract -- -5 -2 -> -5 - -2 = -3\n"
+        "  calculator -m 3 4              -> 3 * 4 = 12\n"
+        "  calculator --multiply 3 4      -> 3 * 4 = 12\n"
+        "  calculator -d 10 2             -> 10 / 2 = 5\n"
+        "  calculator --divide 10 2       -> 10 / 2 = 5\n"
+        "  calculator -p 2 3              -> 2 ^ 3 = 8\n"
+        "  calculator --power 2 3         -> 2 ^ 3 = 8\n"
+        "  calculator -f 3                -> 3! = 6\n"
+        "  calculator --factorial 3       -> 3! = 6\n";
 
     write(STDOUT_FILENO, help, sizeof(help) - 1);
 }
+
 } // namespace
 
 namespace app
