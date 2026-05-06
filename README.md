@@ -11,7 +11,6 @@ After build, the executable is available at:
 
 build/calculator
 
-
 ## Install (optional)
 
 To install the binary system-wide:
@@ -22,50 +21,73 @@ This will install the executable to:
 
 /usr/local/bin/calculator
 
-
 ## Usage
 
-calculator [options] <value1> [value2]
-
+calculator [option] <value1> <value2>
+calculator -f <value>
+calculator --factorial <value>
 
 ## Options
 
--a    Add  
--s    Subtract  
--m    Multiply  
--d    Divide  
--p    Power  
--f    Factorial (one argument)  
--h    Show help
-
+-a, --add          Add
+-s, --subtract     Subtract
+-m, --multiply     Multiply
+-d, --divide       Divide
+-p, --power        Power
+-f, --factorial    Factorial (one argument)
+-h, --help         Show help
 
 ## Notes
 
 Use `--` once to stop option parsing if arguments are negative numbers.
 All arguments after `--` are treated as values.
 
-Example:
+Examples:
 
-calculator -s -- 5 -2
+calculator -s -- -5 -2
+calculator --subtract -- -5 -2
 
+Use one operation option per command.
+
+Correct:
+
+calculator -a 1 2
+calculator --add 1 2
+
+Incorrect:
+
+calculator -add 1 2
+
+`-add` is interpreted as several short options: `-a`, `-d`, `-d`.
+Use `--add` for the long option.
 
 ## Examples
 
-calculator -a 1 2        -> 1 + 2 = 3  
-calculator -s -- -5 -2   -> -5 - -2 = -3  
-calculator -m 3 4        -> 3 * 4 = 12  
-calculator -d 10 2       -> 10 / 2 = 5  
-calculator -p 2 3        -> 2 ^ 3 = 8  
-calculator -f 3          -> 3! = 6  
+calculator -a 1 2              -> 1 + 2 = 3
+calculator --add 1 2           -> 1 + 2 = 3
 
+calculator -s -- -5 -2         -> -5 - -2 = -3
+calculator --subtract -- -5 -2 -> -5 - -2 = -3
+
+calculator -m 3 4              -> 3 * 4 = 12
+calculator --multiply 3 4      -> 3 * 4 = 12
+
+calculator -d 10 2             -> 10 / 2 = 5
+calculator --divide 10 2       -> 10 / 2 = 5
+
+calculator -p 2 3              -> 2 ^ 3 = 8
+calculator --power 2 3         -> 2 ^ 3 = 8
+
+calculator -f 3                -> 3! = 6
+calculator --factorial 3       -> 3! = 6
 
 ## Errors
 
 Possible error messages:
 
-Error! Division by zero!  
-Error! Unknown operation!  
-Error! Raising to a negative power!  
-Error! Factorial of a negative number!  
-Error! Type overflow!  
+Error! Division by zero!
+Error! Unknown operation!
+Error! Raising to a negative power!
+Error! Factorial of a negative number!
+Error! Type overflow!
 Unknown error
