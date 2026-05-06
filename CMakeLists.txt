@@ -33,6 +33,7 @@ if(ENABLE_CLANG_FORMAT)
 
     file(GLOB_RECURSE CLANG_FORMAT_SRC CONFIGURE_DEPENDS
         src/*.cpp
+	src/*.h
     )
 
     add_custom_target(calculator-clang-format-target
