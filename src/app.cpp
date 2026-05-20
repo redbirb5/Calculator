@@ -1,10 +1,9 @@
 #include "app.h"
 
-#include <iostream>
-#include <stdexcept>
-
 #include <nlohmann/json.hpp>
 
+#include <iostream>
+#include <stdexcept>
 
 namespace app
 {
@@ -13,22 +12,26 @@ Request JsonParser::parse(int argc, char** argv) const
 {
     using json = nlohmann::json;
 
-    if(argc != 2){
+    if (argc != 2)
+    {
         throw std::invalid_argument("Expected one JSON argument");
     }
     json data = json::parse(argv[1]);
 
-    if(!data.contains("operation") || !data.contains("value1")){
-        throw std::invalid_argument("Missing required JSON fields: operation or value1");
+    if (!data.contains("operation") || !data.contains("value1"))
+    {
+        throw std::invalid_argument(
+            "Missing required JSON fields: operation or value1");
     }
     Request req;
     req.operation = recognizeOperation(data.at("operation").get<std::string>());
-    if(req.operation == Operation::Unknown)
+    if (req.operation == Operation::Unknown)
         throw std::invalid_argument("Unknown operation");
     req.value1 = data.at("value1").get<int>();
 
-    if(req.operation != Operation::Factorial){
-        if(!data.contains("value2")) 
+    if (req.operation != Operation::Factorial)
+    {
+        if (!data.contains("value2"))
             throw std::invalid_argument("Missing required JSON fields: value2");
         req.value2 = data.at("value2").get<int>();
     }
@@ -38,32 +41,46 @@ Request JsonParser::parse(int argc, char** argv) const
 
 Operation JsonParser::recognizeOperation(const std::string& operation) const
 {
-    if(operation == "add"){
+    if (operation == "add")
+    {
         return Operation::Add;
-    } else if(operation == "subtract"){
+    }
+    else if (operation == "subtract")
+    {
         return Operation::Subtract;
-    }else if(operation == "multiply"){
+    }
+    else if (operation == "multiply")
+    {
         return Operation::Multiply;
-    }else if(operation == "divide"){
+    }
+    else if (operation == "divide")
+    {
         return Operation::Divide;
-    }else if(operation == "power"){
+    }
+    else if (operation == "power")
+    {
         return Operation::Power;
-    }else if(operation == "factorial"){
+    }
+    else if (operation == "factorial")
+    {
         return Operation::Factorial;
-    }else{
+    }
+    else
+    {
         return Operation::Unknown;
     }
 }
 
 int Calculator::calculate(const Request& req) const
 {
-    switch(req.operation){
+    switch (req.operation)
+    {
         case Operation::Add:
             return math_.add(req.value1, req.value2.value());
         case Operation::Subtract:
             return math_.subtract(req.value1, req.value2.value());
         case Operation::Multiply:
-            return math_.multiply(req.value1, req.value2.value()); 
+            return math_.multiply(req.value1, req.value2.value());
         case Operation::Divide:
             return math_.divide(req.value1, req.value2.value());
         case Operation::Power:
@@ -71,16 +88,21 @@ int Calculator::calculate(const Request& req) const
         case Operation::Factorial:
             return math_.factorial(req.value1);
         default:
-            throw std::invalid_argument("Unknown operation");    
+            throw std::invalid_argument("Unknown operation");
     }
 }
 
 void Printer::print(const Request& req, int result) const
 {
-    if(req.operation == Operation::Factorial){
-        std::cout<<req.value1<<getOperationSymbol(req.operation)<<" = "<<result<<"\n";
-    } else{
-        std::cout<<req.value1<<" "<<getOperationSymbol(req.operation)<<" "<<req.value2.value()<<" = "<<result<<"\n";
+    if (req.operation == Operation::Factorial)
+    {
+        std::cout << req.value1 << getOperationSymbol(req.operation) << " = "
+                  << result << "\n";
+    }
+    else
+    {
+        std::cout << req.value1 << " " << getOperationSymbol(req.operation)
+                  << " " << req.value2.value() << " = " << result << "\n";
     }
 }
 
@@ -99,28 +121,29 @@ void Printer::printHelp() const
         << "  value1       First integer value\n"
         << "  value2       Second integer value; required for all operations except factorial\n\n"
         << "Examples:\n"
-        << "  calculator '{\"operation\":\"add\",\"value1\":1,\"value2\":2}'              -> 1 + 2 = 3\n"
-        << "  calculator '{\"operation\":\"subtract\",\"value1\":-5,\"value2\":-2}'       -> -5 - -2 = -3\n"
-        << "  calculator '{\"operation\":\"multiply\",\"value1\":3,\"value2\":4}'          -> 3 * 4 = 12\n"
-        << "  calculator '{\"operation\":\"divide\",\"value1\":10,\"value2\":2}'           -> 10 / 2 = 5\n"
-        << "  calculator '{\"operation\":\"power\",\"value1\":2,\"value2\":3}'             -> 2 ^ 3 = 8\n"
-        << "  calculator '{\"operation\":\"factorial\",\"value1\":3}'                         -> 3! = 6\n";
+        << "  calculator '{\"operation\":\"add\",\"value1\":1,\"value2\":2}' -> 1 + 2 = 3\n"
+        << "  calculator '{\"operation\":\"subtract\",\"value1\":-5,\"value2\":-2}' -> -5 - -2 = -3\n"
+        << "  calculator '{\"operation\":\"multiply\",\"value1\":3,\"value2\":4}' -> 3 * 4 = 12\n"
+        << "  calculator '{\"operation\":\"divide\",\"value1\":10,\"value2\":2}' -> 10 / 2 = 5\n"
+        << "  calculator '{\"operation\":\"power\",\"value1\":2,\"value2\":3}' -> 2 ^ 3 = 8\n"
+        << "  calculator '{\"operation\":\"factorial\",\"value1\":3}' -> 3! = 6\n";
 }
 
 void Printer::printError(const std::string& error_message) const
 {
-    std::cerr << error_message << "\n";
+    std::cerr << "Error! " << error_message << "\n";
 }
 
 std::string Printer::getOperationSymbol(Operation oprt) const
 {
-    switch(oprt){
+    switch (oprt)
+    {
         case Operation::Add:
             return "+";
         case Operation::Subtract:
             return "-";
         case Operation::Multiply:
-            return "*"; 
+            return "*";
         case Operation::Divide:
             return "/";
         case Operation::Power:
@@ -128,13 +151,13 @@ std::string Printer::getOperationSymbol(Operation oprt) const
         case Operation::Factorial:
             return "!";
         default:
-            throw std::invalid_argument("Unknown operation");    
+            throw std::invalid_argument("Unknown operation");
     }
 }
 
 bool CalculatorApp::isHelpRequested(int argc, char** argv) const
 {
-    #pragma unroll 3
+#pragma unroll 3
     for (int i = 1; i < argc; ++i)
     {
         if (std::string(argv[i]) == "-h" || std::string(argv[i]) == "--help")
@@ -147,15 +170,19 @@ bool CalculatorApp::isHelpRequested(int argc, char** argv) const
 
 int CalculatorApp::run(int argc, char** argv)
 {
-    if(isHelpRequested(argc, argv)){
+    if (isHelpRequested(argc, argv))
+    {
         printer_.printHelp();
         return 0;
     }
-    try{
+    try
+    {
         Request req = json_parser_.parse(argc, argv);
         int result = calculator_.calculate(req);
         printer_.print(req, result);
-    } catch (const std::exception& error){
+    }
+    catch (const std::exception& error)
+    {
         printer_.printError(error.what());
         return 1;
     }
