@@ -1,14 +1,24 @@
 #pragma once
 
+#include "libmath.h"
+
 #include <optional>
 #include <string>
 
 namespace app
 {
-    //void run(int argc, char** argv);
+    enum class Operation{
+        Unknown = 0,
+        Add, 
+        Subtract,
+        Multiply,
+        Divide,
+        Power,
+        Factorial,
+    };
 
     struct Request{
-        std::string operation;
+        Operation operation;
         int value1;
         std::optional<int> value2;
     };
@@ -16,16 +26,24 @@ namespace app
     class JsonParser{
         public:
         Request parse(int argc, char** argv) const;
+        private:
+        Operation recognizeOperation(const std::string& operation) const;
     };
 
     class Calculator{
         public:
         int calculate(const Request& request) const;
+        private:
+        libmath::Arithmetic math_;
     };
 
     class Printer{
         public:
         void print(const Request& request, int result) const;
+        void printHelp() const;
+        void printError(const std::string& error_message) const;
+        private:
+        std::string getOperationSymbol(Operation oprt) const;
     };
 
     class CalculatorApp{
@@ -33,7 +51,8 @@ namespace app
         int run(int argc, char** argv);
 
         private:
-        JsonParser parser_;
+        bool isHelpRequested(int argc, char** argv) const;
+        JsonParser json_parser_;
         Calculator calculator_;
         Printer printer_;
     };

@@ -7,10 +7,18 @@ include(FetchContent)
 FetchContent_Declare(
 	libmath
 	GIT_REPOSITORY git@github.com:guelderrose8/libmath.git
-	GIT_TAG main
+	GIT_TAG homework-2
 )
 
-FetchContent_MakeAvailable(libmath)
+FetchContent_Declare(
+    json
+    URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+)
+
+FetchContent_MakeAvailable(
+    libmath 
+    json
+)
 
 add_executable(calculator
 	src/app.cpp
@@ -20,6 +28,7 @@ add_executable(calculator
 target_link_libraries(calculator
 	PRIVATE
 	    math
+        nlohmann_json::nlohmann_json
 )
 
 install(TARGETS calculator
@@ -33,7 +42,7 @@ if(ENABLE_CLANG_FORMAT)
 
     file(GLOB_RECURSE CLANG_FORMAT_SRC CONFIGURE_DEPENDS
         src/*.cpp
-	src/*.h
+	    src/*.h
     )
 
     add_custom_target(calculator-clang-format-target

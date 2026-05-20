@@ -1,179 +1,143 @@
 #include "app.h"
 
-#include "libmath.h"
+#include <iostream>
+#include <stdexcept>
 
-#include <getopt.h>
-#include <string.h>
-#include <unistd.h>
+#include <nlohmann/json.hpp>
 
-#include <cstdio>
-#include <cstdlib>
 
-namespace
+namespace app
 {
 
-struct Task
+Request JsonParser::parse(int argc, char** argv) const
 {
-    int value1;
-    char operation;
-    int value2;
-    int status;
-    int result;
-};
+    using json = nlohmann::json;
 
-void parse(int argc, char** argv, Task& task)
-{
-    const option long_options[] = {{"add", no_argument, nullptr, 'a'},
-                                   {"subtract", no_argument, nullptr, 's'},
-                                   {"multiply", no_argument, nullptr, 'm'},
-                                   {"divide", no_argument, nullptr, 'd'},
-                                   {"power", no_argument, nullptr, 'p'},
-                                   {"factorial", no_argument, nullptr, 'f'},
-                                   {nullptr, 0, nullptr, 0}};
+    if(argc != 2){
+        throw std::invalid_argument("Expected one JSON argument");
+    }
+    json data = json::parse(argv[1]);
 
-    int opt;
-    int option_index = 0;
+    if(!data.contains("operation") || !data.contains("value1")){
+        throw std::invalid_argument("Missing required JSON fields: operation or value1");
+    }
+    Request req;
+    req.operation = recognizeOperation(data.at("operation").get<std::string>());
+    if(req.operation == Operation::Unknown)
+        throw std::invalid_argument("Unknown operation");
+    req.value1 = data.at("value1").get<int>();
 
-    bool operation_found = false;
-
-    // NOLINTNEXTLINE(altera-unroll-loops)
-    while ((opt = getopt_long(argc, argv, "asmdpf", long_options,
-                              &option_index)) != -1)
-    {
-        switch (opt)
-        {
-            case 'a':
-            case 's':
-            case 'm':
-            case 'd':
-            case 'p':
-            case 'f':
-                if (operation_found)
-                {
-                    task.operation = '?';
-                    return;
-                }
-
-                operation_found = true;
-                switch (opt)
-                {
-                    case 'a':
-                        task.operation = '+';
-                        break;
-                    case 's':
-                        task.operation = '-';
-                        break;
-                    case 'm':
-                        task.operation = '*';
-                        break;
-                    case 'd':
-                        task.operation = '/';
-                        break;
-                    case 'p':
-                        task.operation = '^';
-                        break;
-                    case 'f':
-                        task.operation = '!';
-                        break;
-                }
-
-                break;
-
-            default:
-                task.operation = '?';
-                return;
-        }
+    if(req.operation != Operation::Factorial){
+        if(!data.contains("value2")) 
+            throw std::invalid_argument("Missing required JSON fields: value2");
+        req.value2 = data.at("value2").get<int>();
     }
 
-    if (task.operation == '!')
-    {
-        task.value1 = atoi(argv[optind]);
-    }
-    else
-    {
-        task.value1 = atoi(argv[optind]);
-        task.value2 = atoi(argv[optind + 1]);
+    return req;
+}
+
+Operation JsonParser::recognizeOperation(const std::string& operation) const
+{
+    if(operation == "add"){
+        return Operation::Add;
+    } else if(operation == "subtract"){
+        return Operation::Subtract;
+    }else if(operation == "multiply"){
+        return Operation::Multiply;
+    }else if(operation == "divide"){
+        return Operation::Divide;
+    }else if(operation == "power"){
+        return Operation::Power;
+    }else if(operation == "factorial"){
+        return Operation::Factorial;
+    }else{
+        return Operation::Unknown;
     }
 }
 
-void calculate(Task& task)
+int Calculator::calculate(const Request& req) const
 {
-    task.status = 0;
-    switch (task.operation)
-    {
-        case '+':
-            task.status =
-                libmath::addition(task.value1, task.value2, task.result);
-            break;
-        case '-':
-            task.status =
-                libmath::subtraction(task.value1, task.value2, task.result);
-            break;
-        case '*':
-            task.status =
-                libmath::multiplication(task.value1, task.value2, task.result);
-            break;
-        case '/':
-            task.status =
-                libmath::division(task.value1, task.value2, task.result);
-            break;
-        case '^':
-            task.status = libmath::power(task.value1, task.value2, task.result);
-            break;
-        case '!':
-            task.status = libmath::factorial(task.value1, task.result);
-            break;
+    switch(req.operation){
+        case Operation::Add:
+            return math_.add(req.value1, req.value2.value());
+        case Operation::Subtract:
+            return math_.subtract(req.value1, req.value2.value());
+        case Operation::Multiply:
+            return math_.multiply(req.value1, req.value2.value()); 
+        case Operation::Divide:
+            return math_.divide(req.value1, req.value2.value());
+        case Operation::Power:
+            return math_.power(req.value1, req.value2.value());
+        case Operation::Factorial:
+            return math_.factorial(req.value1);
         default:
-            task.status = 1;
+            throw std::invalid_argument("Unknown operation");    
     }
 }
 
-void output(Task task)
+void Printer::print(const Request& req, int result) const
 {
-    if (task.status == 0)
-    {
-        if (task.operation == '!')
-        {
-            printf("%d! = %d\n", task.value1, task.result);
-        }
-        else
-        {
-            printf("%d %c %d = %d\n", task.value1, task.operation, task.value2,
-                   task.result);
-        }
-    }
-    else if (task.status == -1)
-    {
-        printf("Error! Division by zero!\n");
-    }
-    else if (task.status == 1)
-    {
-        printf("Error! Unknown operation!\n");
-    }
-    else if (task.status == 2)
-    {
-        printf("Error! Raising to a negative power!\n");
-    }
-    else if (task.status == 3)
-    {
-        printf("Error! Factorial of a negative number!\n");
-    }
-    else if (task.status == 4)
-    {
-        printf("Error! Type overflow!\n");
-    }
-    else
-    {
-        printf("Unknown error\n");
+    if(req.operation == Operation::Factorial){
+        std::cout<<req.value1<<getOperationSymbol(req.operation)<<" = "<<result<<"\n";
+    } else{
+        std::cout<<req.value1<<" "<<getOperationSymbol(req.operation)<<" "<<req.value2.value()<<" = "<<result<<"\n";
     }
 }
 
-bool isHelpRequested(int argc, char** argv)
+void Printer::printHelp() const
 {
-#pragma unroll 3
+    std::cout
+        << "Usage:\n"
+        << "  calculator '<json>'\n"
+        << "  calculator -h\n"
+        << "  calculator --help\n\n"
+        << "JSON format:\n"
+        << "  {\"operation\":\"add\",\"value1\":1,\"value2\":2}\n"
+        << "  {\"operation\":\"factorial\",\"value1\":5}\n\n"
+        << "Fields:\n"
+        << "  operation    add, subtract, multiply, divide, power, factorial\n"
+        << "  value1       First integer value\n"
+        << "  value2       Second integer value; required for all operations except factorial\n\n"
+        << "Examples:\n"
+        << "  calculator '{\"operation\":\"add\",\"value1\":1,\"value2\":2}'              -> 1 + 2 = 3\n"
+        << "  calculator '{\"operation\":\"subtract\",\"value1\":-5,\"value2\":-2}'       -> -5 - -2 = -3\n"
+        << "  calculator '{\"operation\":\"multiply\",\"value1\":3,\"value2\":4}'          -> 3 * 4 = 12\n"
+        << "  calculator '{\"operation\":\"divide\",\"value1\":10,\"value2\":2}'           -> 10 / 2 = 5\n"
+        << "  calculator '{\"operation\":\"power\",\"value1\":2,\"value2\":3}'             -> 2 ^ 3 = 8\n"
+        << "  calculator '{\"operation\":\"factorial\",\"value1\":3}'                         -> 3! = 6\n";
+}
+
+void Printer::printError(const std::string& error_message) const
+{
+    std::cerr << error_message << "\n";
+}
+
+std::string Printer::getOperationSymbol(Operation oprt) const
+{
+    switch(oprt){
+        case Operation::Add:
+            return "+";
+        case Operation::Subtract:
+            return "-";
+        case Operation::Multiply:
+            return "*"; 
+        case Operation::Divide:
+            return "/";
+        case Operation::Power:
+            return "^";
+        case Operation::Factorial:
+            return "!";
+        default:
+            throw std::invalid_argument("Unknown operation");    
+    }
+}
+
+bool CalculatorApp::isHelpRequested(int argc, char** argv) const
+{
+    #pragma unroll 3
     for (int i = 1; i < argc; ++i)
     {
-        if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
+        if (std::string(argv[i]) == "-h" || std::string(argv[i]) == "--help")
         {
             return true;
         }
@@ -181,60 +145,21 @@ bool isHelpRequested(int argc, char** argv)
     return false;
 }
 
-void printHelp()
+int CalculatorApp::run(int argc, char** argv)
 {
-    const char help[] =
-        "Usage:\n"
-        "  calculator [option] <value1> <value2>\n"
-        "  calculator -f <value>\n"
-        "  calculator --factorial <value>\n\n"
-        "Options:\n"
-        "  -a, --add          Add\n"
-        "  -s, --subtract     Subtract\n"
-        "  -m, --multiply     Multiply\n"
-        "  -d, --divide       Divide\n"
-        "  -p, --power        Power\n"
-        "  -f, --factorial    Factorial (one argument)\n"
-        "  -h, --help         Show help\n\n"
-        "Notes:\n"
-        "  Use \"--\" once to stop option parsing if arguments are negative numbers.\n"
-        "  All arguments after \"--\" are treated as values.\n"
-        "  Example: calculator -s -- -5 -2\n"
-        "  Example: calculator --subtract -- -5 -2\n\n"
-        "Examples:\n"
-        "  calculator -a 1 2              -> 1 + 2 = 3\n"
-        "  calculator --add 1 2           -> 1 + 2 = 3\n"
-        "  calculator -s -- -5 -2         -> -5 - -2 = -3\n"
-        "  calculator --subtract -- -5 -2 -> -5 - -2 = -3\n"
-        "  calculator -m 3 4              -> 3 * 4 = 12\n"
-        "  calculator --multiply 3 4      -> 3 * 4 = 12\n"
-        "  calculator -d 10 2             -> 10 / 2 = 5\n"
-        "  calculator --divide 10 2       -> 10 / 2 = 5\n"
-        "  calculator -p 2 3              -> 2 ^ 3 = 8\n"
-        "  calculator --power 2 3         -> 2 ^ 3 = 8\n"
-        "  calculator -f 3                -> 3! = 6\n"
-        "  calculator --factorial 3       -> 3! = 6\n";
-
-    write(STDOUT_FILENO, help, sizeof(help) - 1);
-}
-
-} // namespace
-
-namespace app
-{
-
-void run(int argc, char** argv)
-{
-    if (isHelpRequested(argc, argv))
-    {
-        printHelp();
-        return;
+    if(isHelpRequested(argc, argv)){
+        printer_.printHelp();
+        return 0;
     }
-
-    Task task;
-    parse(argc, argv, task);
-    calculate(task);
-    output(task);
+    try{
+        Request req = json_parser_.parse(argc, argv);
+        int result = calculator_.calculate(req);
+        printer_.print(req, result);
+    } catch (const std::exception& error){
+        printer_.printError(error.what());
+        return 1;
+    }
+    return 0;
 }
 
 } // namespace app

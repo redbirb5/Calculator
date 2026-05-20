@@ -2,5 +2,6 @@
 
 int main(int argc, char** argv)
 {
-    app::run(argc, argv);
+    app::CalculatorApp calc;
+    return calc.run(argc, argv);
 }
