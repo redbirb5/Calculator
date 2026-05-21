@@ -1,8 +1,11 @@
 #include "app.h"
 
+#include "libmath.h"
+
 #include <nlohmann/json.hpp>
 
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 
 namespace app
@@ -71,22 +74,33 @@ Operation JsonParser::recognizeOperation(const std::string& operation) const
     }
 }
 
+class Calculator::Impl
+{
+  public:
+    libmath::Arithmetic math_;
+};
+
+Calculator::Calculator() : impl_(std::make_unique<Impl>())
+{}
+
+Calculator::~Calculator() = default;
+
 int Calculator::calculate(const Request& req) const
 {
     switch (req.operation)
     {
         case Operation::Add:
-            return math_.add(req.value1, req.value2.value());
+            return impl_->math_.add(req.value1, req.value2.value());
         case Operation::Subtract:
-            return math_.subtract(req.value1, req.value2.value());
+            return impl_->math_.subtract(req.value1, req.value2.value());
         case Operation::Multiply:
-            return math_.multiply(req.value1, req.value2.value());
+            return impl_->math_.multiply(req.value1, req.value2.value());
         case Operation::Divide:
-            return math_.divide(req.value1, req.value2.value());
+            return impl_->math_.divide(req.value1, req.value2.value());
         case Operation::Power:
-            return math_.power(req.value1, req.value2.value());
+            return impl_->math_.power(req.value1, req.value2.value());
         case Operation::Factorial:
-            return math_.factorial(req.value1);
+            return impl_->math_.factorial(req.value1);
         default:
             throw std::invalid_argument("Unknown operation");
     }

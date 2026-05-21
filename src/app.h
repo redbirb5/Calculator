@@ -1,7 +1,6 @@
 #pragma once
 
-#include "libmath.h"
-
+#include <memory>
 #include <optional>
 #include <string>
 
@@ -37,10 +36,14 @@ class JsonParser
 class Calculator
 {
   public:
+    Calculator();
+    ~Calculator();
+
     int calculate(const Request& request) const;
 
   private:
-    libmath::Arithmetic math_;
+    class Impl;
+    std::unique_ptr<Impl> impl_;
 };
 
 class Printer
