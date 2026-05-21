@@ -6,7 +6,7 @@ include(FetchContent)
 
 FetchContent_Declare(
 	libmath
-	GIT_REPOSITORY git@github.com:guelderrose8/libmath.git
+	GIT_REPOSITORY git@github.com:redbirb5/libmath.git
 	GIT_TAG homework-2
 )
 
