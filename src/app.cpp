@@ -115,8 +115,8 @@ void Printer::print(const Request& req, int result) const
     }
     else
     {
-        std::cout << req.value1 << " " << getOperationSymbol(req.operation)
-                  << " " << req.value2.value() << " = " << result << "\n";
+        std::cout << formatOperand(req.value1) << " " << getOperationSymbol(req.operation)
+                  << " " << formatOperand(req.value2.value()) << " = " << result << "\n";
     }
 }
 
@@ -136,7 +136,7 @@ void Printer::printHelp() const
         << "  value2       Second integer value; required for all operations except factorial\n\n"
         << "Examples:\n"
         << "  calculator '{\"operation\":\"add\",\"value1\":1,\"value2\":2}' -> 1 + 2 = 3\n"
-        << "  calculator '{\"operation\":\"subtract\",\"value1\":-5,\"value2\":-2}' -> -5 - -2 = -3\n"
+        << "  calculator '{\"operation\":\"subtract\",\"value1\":-5,\"value2\":-2}' -> (-5) - (-2) = -3\n"
         << "  calculator '{\"operation\":\"multiply\",\"value1\":3,\"value2\":4}' -> 3 * 4 = 12\n"
         << "  calculator '{\"operation\":\"divide\",\"value1\":10,\"value2\":2}' -> 10 / 2 = 5\n"
         << "  calculator '{\"operation\":\"power\",\"value1\":2,\"value2\":3}' -> 2 ^ 3 = 8\n"
@@ -167,6 +167,13 @@ std::string Printer::getOperationSymbol(Operation oprt) const
         default:
             throw std::invalid_argument("Unknown operation");
     }
+}
+
+std::string Printer::formatOperand(int operand) const
+{
+    if(operand < 0) 
+        return "(" + std::to_string(operand) + ")";
+    return std::to_string(operand);
 }
 
 bool CalculatorApp::isHelpRequested(int argc, char** argv) const

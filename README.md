@@ -1,6 +1,6 @@
 # calculator
 
-Simple CLI calculator in C++ using the `libmath` library (git repository: `git@github.com:guelderrose8/libmath.git`).
+Simple CLI calculator in C++ using the `libmath` library.
 
 ## Build
 
@@ -32,73 +32,52 @@ This will install the executable to:
 ## Usage
 
 ```text
-calculator [option] <value1> <value2>
-calculator -f <value>
-calculator --factorial <value>
+calculator '<json>'
+calculator -h
+calculator --help
 ```
 
-## Options
+## JSON format
+
+Binary operations use `operation`, `value1`, and `value2`:
+
+```json
+{"operation":"add","value1":1,"value2":2}
+```
+
+Factorial uses `operation` and `value1`:
+
+```json
+{"operation":"factorial","value1":5}
+```
+
+Supported operations:
 
 ```text
--a, --add          Add
--s, --subtract     Subtract
--m, --multiply     Multiply
--d, --divide       Divide
--p, --power        Power
--f, --factorial    Factorial (one argument)
--h, --help         Show help
+add
+subtract
+multiply
+divide
+power
+factorial
 ```
-
-## Notes
-
-Use `--` once to stop option parsing if arguments are negative numbers.
-All arguments after `--` are treated as values.
-
-Examples:
-
-```bash
-calculator -s -- -5 -2
-calculator --subtract -- -5 -2
-```
-
-Use one operation option per command.
-
-Correct:
-
-```bash
-calculator -a 1 2
-calculator --add 1 2
-```
-
-Incorrect:
-
-```bash
-calculator -add 1 2
-```
-
-`-add` is interpreted as several short options: `-a`, `-d`, `-d`.
-Use `--add` for the long option.
 
 ## Examples
 
 ```text
-calculator -a 1 2              -> 1 + 2 = 3
-calculator --add 1 2           -> 1 + 2 = 3
+calculator '{"operation":"add","value1":1,"value2":2}' -> 1 + 2 = 3
+calculator '{"operation":"subtract","value1":-5,"value2":-2}' -> (-5) - (-2) = -3
+calculator '{"operation":"multiply","value1":5,"value2":-6}' -> 5 * (-6) = -30
+calculator '{"operation":"divide","value1":10,"value2":2}' -> 10 / 2 = 5
+calculator '{"operation":"power","value1":2,"value2":3}' -> 2 ^ 3 = 8
+calculator '{"operation":"factorial","value1":3}' -> 3! = 6
+```
 
-calculator -s -- -5 -2         -> -5 - -2 = -3
-calculator --subtract -- -5 -2 -> -5 - -2 = -3
+Negative operands are printed in parentheses to keep expressions readable:
 
-calculator -m 3 4              -> 3 * 4 = 12
-calculator --multiply 3 4      -> 3 * 4 = 12
-
-calculator -d 10 2             -> 10 / 2 = 5
-calculator --divide 10 2       -> 10 / 2 = 5
-
-calculator -p 2 3              -> 2 ^ 3 = 8
-calculator --power 2 3         -> 2 ^ 3 = 8
-
-calculator -f 3                -> 3! = 6
-calculator --factorial 3       -> 3! = 6
+```text
+5 * (-6) = -30
+(-5) - (-2) = -3
 ```
 
 ## Errors
@@ -106,10 +85,9 @@ calculator --factorial 3       -> 3! = 6
 Possible error messages:
 
 ```text
-Error! Division by zero!
-Error! Unknown operation!
-Error! Raising to a negative power!
-Error! Factorial of a negative number!
-Error! Type overflow!
-Unknown error
+Error! Division by zero
+Error! Unknown operation
+Error! Raising to a negative power
+Error! Factorial of a negative number
+Error! Type overflow
 ```

@@ -55,6 +55,7 @@ class Printer
 
   private:
     std::string getOperationSymbol(Operation oprt) const;
+    std::string formatOperand(int operand) const;
 };
 
 class CalculatorApp
