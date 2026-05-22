@@ -15,21 +15,55 @@ FetchContent_Declare(
     URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
 )
 
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
+)
+
 FetchContent_MakeAvailable(
     libmath 
     json
+    googletest
+)
+
+add_library(calculator_app
+    src/app.cpp
+)
+
+target_link_libraries(calculator_app
+	PRIVATE
+	    math
+        nlohmann_json::nlohmann_json
+)
+
+target_include_directories(calculator_app
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 add_executable(calculator
-	src/app.cpp
 	src/main.cpp
 )
 
 target_link_libraries(calculator
 	PRIVATE
-	    math
-        nlohmann_json::nlohmann_json
+        calculator_app
 )
+
+enable_testing()
+
+add_executable(calculator_tests
+    tests/app_test.cpp
+)
+
+target_link_libraries(calculator_tests
+    PRIVATE
+        calculator_app
+        GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(calculator_tests)
 
 install(TARGETS calculator
 	RUNTIME DESTINATION /usr/local/bin
