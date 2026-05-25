@@ -11,7 +11,7 @@
 namespace app
 {
 
-Request JsonParser::parse(int argc, char** argv) const
+Request Parser::parse(int argc, char** argv) const
 {
     using json = nlohmann::json;
 
@@ -42,7 +42,7 @@ Request JsonParser::parse(int argc, char** argv) const
     return req;
 }
 
-Operation JsonParser::recognizeOperation(const std::string& operation) const
+Operation Parser::recognizeOperation(const std::string& operation) const
 {
     if (operation == "add")
     {
@@ -115,8 +115,10 @@ void Printer::print(const Request& req, int result) const
     }
     else
     {
-        std::cout << formatOperand(req.value1) << " " << getOperationSymbol(req.operation)
-                  << " " << formatOperand(req.value2.value()) << " = " << result << "\n";
+        std::cout << formatOperand(req.value1) << " "
+                  << getOperationSymbol(req.operation) << " "
+                  << formatOperand(req.value2.value()) << " = " << result
+                  << "\n";
     }
 }
 
@@ -171,7 +173,7 @@ std::string Printer::getOperationSymbol(Operation oprt) const
 
 std::string Printer::formatOperand(int operand) const
 {
-    if(operand < 0) 
+    if (operand < 0)
         return "(" + std::to_string(operand) + ")";
     return std::to_string(operand);
 }

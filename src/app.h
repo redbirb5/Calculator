@@ -24,7 +24,7 @@ struct Request
     std::optional<int> value2;
 };
 
-class JsonParser
+class Parser
 {
   public:
     Request parse(int argc, char** argv) const;
@@ -65,7 +65,7 @@ class CalculatorApp
 
   private:
     bool isHelpRequested(int argc, char** argv) const;
-    JsonParser json_parser_;
+    Parser json_parser_;
     Calculator calculator_;
     Printer printer_;
 };
