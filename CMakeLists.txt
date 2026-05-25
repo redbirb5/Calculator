@@ -20,20 +20,28 @@ FetchContent_Declare(
     URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
 )
 
+FetchContent_Declare(
+    spdlog
+    URL https://github.com/gabime/spdlog/archive/refs/tags/v1.17.0.zip
+)
+
 FetchContent_MakeAvailable(
     libmath 
     json
     googletest
+    spdlog
 )
 
 add_library(calculator_app
     src/app.cpp
+    src/logger.cpp
 )
 
 target_link_libraries(calculator_app
 	PRIVATE
 	    math
         nlohmann_json::nlohmann_json
+        spdlog::spdlog
 )
 
 target_include_directories(calculator_app
