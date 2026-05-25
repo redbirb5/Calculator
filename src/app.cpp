@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include "libmath.h"
+#include "logger.h"
 
 #include <nlohmann/json.hpp>
 
@@ -198,17 +199,29 @@ int CalculatorApp::run(int argc, char** argv)
         printer_.printHelp();
         return 0;
     }
+
+    if (argc == 2)
+        Logger::instance().info(std::string("Calculation request received: ") +
+                                argv[1]);
+
     try
     {
         Request req = json_parser_.parse(argc, argv);
         int result = calculator_.calculate(req);
+        Logger::instance().info("Calculation result: " +
+                                std::to_string(result));
         printer_.print(req, result);
     }
     catch (const std::exception& error)
     {
+        Logger::instance().error(error.what());
+
         printer_.printError(error.what());
         return 1;
     }
+
+    Logger::instance().info("Calculation completed successfully");
+
     return 0;
 }
 
