@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(calculator)
+project(calculator VERSION 2.0.0)
 
 include(FetchContent)
 
@@ -96,7 +96,7 @@ if(ENABLE_CLANG_FORMAT)
             "Formatting with ${CLANG_FORMAT_PATH} ..."
     )
 
-    add_dependencies(calculator calculator-clang-format-target)
+    add_dependencies(calculator_app calculator-clang-format-target)
 endif()
 
 option(ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
@@ -105,5 +105,5 @@ if(ENABLE_CLANG_TIDY)
     message(STATUS "Found clang-tidy: ${CLANG_TIDY_PATH}")
 
     set(CLANG_TIDY_COMMAND ${CLANG_TIDY_PATH} "-config-file=${CMAKE_SOURCE_DIR}/.clang-tidy")
-    set_target_properties(calculator PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
+    set_target_properties(calculator_app calculator PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
 endif()
