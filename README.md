@@ -2,6 +2,8 @@
 
 Simple CLI calculator in C++ using the `libmath` library.
 
+Current version: `2.0.0`.
+
 ## Build
 
 ```bash
@@ -13,6 +15,17 @@ After build, the executable is available at:
 
 ```text
 build/calculator
+```
+
+## Tests
+
+The project includes unit tests for successful calculations, calculation errors,
+invalid JSON input, and help output.
+
+After building the project, run the tests with:
+
+```bash
+ctest --test-dir build --output-on-failure
 ```
 
 ## Install (optional)
@@ -62,6 +75,9 @@ power
 factorial
 ```
 
+All values must be JSON integer numbers. Malformed JSON, missing required fields,
+unsupported operations, and invalid value types are reported as errors.
+
 ## Examples
 
 ```text
@@ -80,14 +96,30 @@ Negative operands are printed in parentheses to keep expressions readable:
 (-5) - (-2) = -3
 ```
 
+## Logging
+
+Calculation requests, results, and errors are written to:
+
+```text
+calculator.log
+```
+
+The file is created in the working directory from which the program is run.
+
 ## Errors
 
 Possible error messages:
 
 ```text
+Error! Expected one JSON argument
+Error! Missing required JSON fields: operation or value1
+Error! Missing required JSON fields: value2
 Error! Division by zero
 Error! Unknown operation
 Error! Raising to a negative power
 Error! Factorial of a negative number
 Error! Type overflow
 ```
+
+Invalid JSON syntax and values of the wrong JSON type are also reported as errors
+with details supplied by the JSON parser.
