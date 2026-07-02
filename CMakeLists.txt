@@ -34,7 +34,11 @@ FetchContent_MakeAvailable(
 
 add_library(calculator_app
     src/app.cpp
+    src/calculator.cpp
     src/logger.cpp
+    src/calculation_service.cpp
+    src/calculation_cache.cpp
+    src/calculation_storage.cpp
 )
 
 target_link_libraries(calculator_app

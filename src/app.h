@@ -1,28 +1,14 @@
 #pragma once
 
+#include "calculation_types.h"
+#include "calculator.h"
+
 #include <memory>
 #include <optional>
 #include <string>
 
 namespace app
 {
-enum class Operation
-{
-    Unknown = 0,
-    Add,
-    Subtract,
-    Multiply,
-    Divide,
-    Power,
-    Factorial,
-};
-
-struct Request
-{
-    Operation operation;
-    int value1;
-    std::optional<int> value2;
-};
 
 class Parser
 {
@@ -31,19 +17,6 @@ class Parser
 
   private:
     Operation recognizeOperation(const std::string& operation) const;
-};
-
-class Calculator
-{
-  public:
-    Calculator();
-    ~Calculator();
-
-    int calculate(const Request& request) const;
-
-  private:
-    class Impl;
-    std::unique_ptr<Impl> impl_;
 };
 
 class Printer
@@ -67,6 +40,7 @@ class CalculatorApp
     bool isHelpRequested(int argc, char** argv) const;
     Parser json_parser_;
     Calculator calculator_;
+    // CalculationService calc_service_;
     Printer printer_;
 };
 
