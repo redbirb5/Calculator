@@ -3,18 +3,20 @@
 #include <memory>
 #include <string>
 
-namespace app
+namespace app 
 {
 
-class PostgresConnection
+class PostgresConnection 
 {
-  public:
+    public:
     explicit PostgresConnection(const std::string& connection_string);
     ~PostgresConnection();
 
-  private:
+    void executeCommand(const std::string& command) const;
+
+    private:
     class Impl;
     std::unique_ptr<Impl> impl_;
 };
 
-} // namespace app
+}
