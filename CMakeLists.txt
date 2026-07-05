@@ -32,6 +32,8 @@ FetchContent_MakeAvailable(
     spdlog
 )
 
+find_package(PostgreSQL REQUIRED)
+
 add_library(calculator_app
     src/app.cpp
     src/calculator.cpp
@@ -39,6 +41,7 @@ add_library(calculator_app
     src/calculation_service.cpp
     src/calculation_cache.cpp
     src/calculation_storage.cpp
+    src/postgres_connection.cpp
 )
 
 target_link_libraries(calculator_app
@@ -46,6 +49,7 @@ target_link_libraries(calculator_app
 	    math
         nlohmann_json::nlohmann_json
         spdlog::spdlog
+        PostgreSQL::PostgreSQL
 )
 
 target_include_directories(calculator_app
