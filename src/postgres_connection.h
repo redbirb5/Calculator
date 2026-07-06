@@ -3,20 +3,39 @@
 #include <memory>
 #include <string>
 
-namespace app 
+struct pg_result;
+using PGresult = pg_result;
+
+namespace app
 {
 
-class PostgresConnection 
+class PostgresResult
 {
-    public:
-    explicit PostgresConnection(const std::string& connection_string);
-    ~PostgresConnection();
+  public:
+    explicit PostgresResult(PGresult* result);
+    ~PostgresResult();
 
-    void executeCommand(const std::string& command) const;
+    int rowsCount() const;
+    std::string value(int row, int column) const;
+    bool isNull(int row, int column) const;
 
-    private:
+  private:
     class Impl;
     std::unique_ptr<Impl> impl_;
 };
 
-}
+class PostgresConnection
+{
+  public:
+    explicit PostgresConnection(const std::string& connection_string);
+    ~PostgresConnection();
+
+    void executeCommand(const std::string& command) const;
+    PostgresResult executeQuery(const std::string& query) const;
+
+  private:
+    class Impl;
+    std::unique_ptr<Impl> impl_;
+};
+
+} // namespace app
