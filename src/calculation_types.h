@@ -95,4 +95,32 @@ std::string operationToString(Operation operation)
     }
 }
 
+CalculationStatus calculationStatusFromString(const std::string& status)
+{
+    if (status == "0")
+    {
+        return CalculationStatus::Success;
+    }
+    else if (status == "1")
+    {
+        return CalculationStatus::DivisionByZero;
+    }
+    else if (status == "2")
+    {
+        return CalculationStatus::NegativePower;
+    }
+    else if (status == "3")
+    {
+        return CalculationStatus::NegativeFactorial;
+    }
+    else if (status == "4")
+    {
+        return CalculationStatus::TypeOverflow;
+    }
+    else 
+    {
+        return CalculationStatus::UnknownCalculationError;
+    }
+}
+
 } // namespace app
