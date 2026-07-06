@@ -42,7 +42,7 @@ struct CalculationRecord
     std::string error_message;
 };
 
-Operation operationFromString(const std::string& operation)
+inline Operation operationFromString(const std::string& operation)
 {
     if (operation == "add")
     {
@@ -74,7 +74,7 @@ Operation operationFromString(const std::string& operation)
     }
 }
 
-std::string operationToString(Operation operation)
+inline std::string operationToString(Operation operation)
 {
     switch (operation)
     {
@@ -95,7 +95,7 @@ std::string operationToString(Operation operation)
     }
 }
 
-CalculationStatus calculationStatusFromString(const std::string& status)
+inline CalculationStatus calculationStatusFromString(const std::string& status)
 {
     if (status == "0")
     {
