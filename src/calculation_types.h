@@ -42,4 +42,57 @@ struct CalculationRecord
     std::string error_message;
 };
 
+Operation operationFromString(const std::string& operation)
+{
+    if (operation == "add")
+    {
+        return Operation::Add;
+    }
+    else if (operation == "subtract")
+    {
+        return Operation::Subtract;
+    }
+    else if (operation == "multiply")
+    {
+        return Operation::Multiply;
+    }
+    else if (operation == "divide")
+    {
+        return Operation::Divide;
+    }
+    else if (operation == "power")
+    {
+        return Operation::Power;
+    }
+    else if (operation == "factorial")
+    {
+        return Operation::Factorial;
+    }
+    else
+    {
+        return Operation::Unknown;
+    }
+}
+
+std::string operationToString(Operation operation)
+{
+    switch (operation)
+    {
+    case Operation::Add:
+        return "add";
+    case Operation::Subtract:
+        return "subtract";
+    case Operation::Multiply:
+        return "multiply";
+    case Operation::Divide:
+        return "divide";
+    case Operation::Power:
+        return "power";
+    case Operation::Factorial:
+        return "factorial";   
+    default:
+        return "unknown";
+    }
+}
+
 } // namespace app

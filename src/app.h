@@ -14,9 +14,6 @@ class Parser
 {
   public:
     Request parse(int argc, char** argv) const;
-
-  private:
-    Operation recognizeOperation(const std::string& operation) const;
 };
 
 class Printer
