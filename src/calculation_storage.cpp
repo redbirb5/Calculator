@@ -22,4 +22,43 @@ void CalculationStorage::initialize()
         )");
 }
 
+std::vector<CalculationRecord> CalculationStorage::loadAll() const
+{
+    PostgresResult result = p_connection_.executeQuery(R"(
+        SELECT operation, value1, value2, result, status, error_message
+        FROM calculations;
+        )");
+
+    int v_size = result.rowsCount();
+    std::vector<CalculationRecord> records(v_size);
+
+    for (int i = 0; i < v_size; i++)
+    {
+        Request req;
+        req.operation = operationFromString(result.value(i, 0));
+        req.value1 = std::stoi(result.value(i, 1));
+        if (!result.isNull(i, 2))
+        {
+            req.value2 = std::stoi(result.value(i, 2));
+        }
+
+        CalculationRecord c_rec;
+        c_rec.request = req;
+        if (!result.isNull(i, 3))
+        {
+            c_rec.result = std::stoi(result.value(i, 3));
+        }
+        c_rec.status = calculationStatusFromString(result.value(i, 4));
+        c_rec.error_message = result.value(i, 5);
+
+        records[i] = c_rec;
+    }
+
+    return records;
+}
+
+void CalculationStorage::save(const CalculationRecord& rec)
+{
+}
+
 } // namespace app
