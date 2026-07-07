@@ -78,20 +78,20 @@ inline std::string operationToString(Operation operation)
 {
     switch (operation)
     {
-    case Operation::Add:
-        return "add";
-    case Operation::Subtract:
-        return "subtract";
-    case Operation::Multiply:
-        return "multiply";
-    case Operation::Divide:
-        return "divide";
-    case Operation::Power:
-        return "power";
-    case Operation::Factorial:
-        return "factorial";   
-    default:
-        return "unknown";
+        case Operation::Add:
+            return "add";
+        case Operation::Subtract:
+            return "subtract";
+        case Operation::Multiply:
+            return "multiply";
+        case Operation::Divide:
+            return "divide";
+        case Operation::Power:
+            return "power";
+        case Operation::Factorial:
+            return "factorial";
+        default:
+            return "unknown";
     }
 }
 
@@ -117,7 +117,7 @@ inline CalculationStatus calculationStatusFromString(const std::string& status)
     {
         return CalculationStatus::TypeOverflow;
     }
-    else 
+    else
     {
         return CalculationStatus::UnknownCalculationError;
     }
@@ -127,18 +127,18 @@ inline std::string calculationStatusToString(CalculationStatus status)
 {
     switch (status)
     {
-    case CalculationStatus::Success:
-        return "0";
-    case CalculationStatus::DivisionByZero:
-        return "1";
-    case CalculationStatus::NegativePower:
-        return "2";
-    case CalculationStatus::NegativeFactorial:
-        return "3";
-    case CalculationStatus::TypeOverflow:
-        return "4"; 
-    default:
-        return "unknown";
+        case CalculationStatus::Success:
+            return "0";
+        case CalculationStatus::DivisionByZero:
+            return "1";
+        case CalculationStatus::NegativePower:
+            return "2";
+        case CalculationStatus::NegativeFactorial:
+            return "3";
+        case CalculationStatus::TypeOverflow:
+            return "4";
+        default:
+            return "unknown";
     }
 }
 
