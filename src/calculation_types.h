@@ -123,4 +123,23 @@ inline CalculationStatus calculationStatusFromString(const std::string& status)
     }
 }
 
+inline std::string calculationStatusToString(CalculationStatus status)
+{
+    switch (status)
+    {
+    case CalculationStatus::Success:
+        return "0";
+    case CalculationStatus::DivisionByZero:
+        return "1";
+    case CalculationStatus::NegativePower:
+        return "2";
+    case CalculationStatus::NegativeFactorial:
+        return "3";
+    case CalculationStatus::TypeOverflow:
+        return "4"; 
+    default:
+        return "unknown";
+    }
+}
+
 } // namespace app
