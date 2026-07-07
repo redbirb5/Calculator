@@ -65,11 +65,12 @@ void CalculationStorage::save(const CalculationRecord& rec)
     params.push_back(operationToString(rec.request.operation));
     params.push_back(std::to_string(rec.request.value1));
     params.push_back(rec.request.value2
-        ? std::optional<std::string>(std::to_string(rec.request.value2.value()))
-        : std::nullopt);
-    params.push_back(rec.result
-        ? std::optional<std::string>(std::to_string(rec.result.value()))
-        : std::nullopt);
+                         ? std::optional<std::string>(
+                               std::to_string(rec.request.value2.value()))
+                         : std::nullopt);
+    params.push_back(rec.result ? std::optional<std::string>(
+                                      std::to_string(rec.result.value()))
+                                : std::nullopt);
     params.push_back(calculationStatusToString(rec.status));
     params.push_back(rec.error_message);
 
