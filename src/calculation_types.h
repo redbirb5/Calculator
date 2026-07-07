@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <stdexcept>
 #include <string>
 
 namespace app
@@ -139,6 +140,27 @@ inline std::string calculationStatusToString(CalculationStatus status)
             return "4";
         default:
             return "unknown";
+    }
+}
+
+inline std::string getOperationSymbol(Operation oprt)
+{
+    switch (oprt)
+    {
+        case Operation::Add:
+            return "+";
+        case Operation::Subtract:
+            return "-";
+        case Operation::Multiply:
+            return "*";
+        case Operation::Divide:
+            return "/";
+        case Operation::Power:
+            return "^";
+        case Operation::Factorial:
+            return "!";
+        default:
+            throw std::invalid_argument("Unknown operation");
     }
 }
 

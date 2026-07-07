@@ -24,7 +24,6 @@ class Printer
     void printError(const std::string& error_message) const;
 
   private:
-    std::string getOperationSymbol(Operation oprt) const;
     std::string formatOperand(int operand) const;
 };
 

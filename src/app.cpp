@@ -87,27 +87,6 @@ void Printer::printError(const std::string& error_message) const
     std::cerr << "Error! " << error_message << "\n";
 }
 
-std::string Printer::getOperationSymbol(Operation oprt) const
-{
-    switch (oprt)
-    {
-        case Operation::Add:
-            return "+";
-        case Operation::Subtract:
-            return "-";
-        case Operation::Multiply:
-            return "*";
-        case Operation::Divide:
-            return "/";
-        case Operation::Power:
-            return "^";
-        case Operation::Factorial:
-            return "!";
-        default:
-            throw std::invalid_argument("Unknown operation");
-    }
-}
-
 std::string Printer::formatOperand(int operand) const
 {
     if (operand < 0)
