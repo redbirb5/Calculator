@@ -27,7 +27,8 @@ Request Parser::parse(int argc, char** argv) const
             "Missing required JSON fields: operation or value1");
     }
     Request req;
-    req.operation = operationFromString(data.at("operation").get<std::string>());
+    req.operation =
+        operationFromString(data.at("operation").get<std::string>());
     if (req.operation == Operation::Unknown)
         throw std::invalid_argument("Unknown operation");
     req.value1 = data.at("value1").get<int>();
@@ -41,7 +42,6 @@ Request Parser::parse(int argc, char** argv) const
 
     return req;
 }
-
 
 void Printer::print(const Request& req, int result) const
 {
