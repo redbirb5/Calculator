@@ -1,7 +1,9 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <string>
+#include <vector>
 
 struct pg_result;
 using PGresult = pg_result;
@@ -32,6 +34,9 @@ class PostgresConnection
 
     void executeCommand(const std::string& command) const;
     PostgresResult executeQuery(const std::string& query) const;
+    void executeParams(
+        const std::string& command,
+        const std::vector<std::optional<std::string>>& params) const;
 
   private:
     class Impl;

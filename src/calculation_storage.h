@@ -16,7 +16,7 @@ class CalculationStorage
 
     void initialize();
     std::vector<CalculationRecord> loadAll() const;
-    void save(const CalculationRecord& record);
+    void save(const CalculationRecord& rec);
 
   private:
     PostgresConnection p_connection_;

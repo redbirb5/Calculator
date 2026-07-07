@@ -59,6 +59,32 @@ std::vector<CalculationRecord> CalculationStorage::loadAll() const
 
 void CalculationStorage::save(const CalculationRecord& rec)
 {
+    std::vector<std::optional<std::string>> params;
+    params.reserve(6);
+
+    params.push_back(operationToString(rec.request.operation));
+    params.push_back(std::to_string(rec.request.value1));
+    params.push_back(rec.request.value2
+        ? std::optional<std::string>(std::to_string(rec.request.value2.value()))
+        : std::nullopt);
+    params.push_back(rec.result
+        ? std::optional<std::string>(std::to_string(rec.result.value()))
+        : std::nullopt);
+    params.push_back(calculationStatusToString(rec.status));
+    params.push_back(rec.error_message);
+
+    p_connection_.executeParams(R"(
+        INSERT INTO calculations (
+            operation,
+            value1,
+            value2,
+            result,
+            status,
+            error_message
+        )
+        VALUES ($1, $2, $3, $4, $5, $6);
+    )",
+                                params);
 }
 
 } // namespace app

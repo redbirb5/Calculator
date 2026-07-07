@@ -72,6 +72,10 @@ class PostgresConnection::Impl
 
     void executeCommand(const std::string& command) const;
     PostgresResult executeQuery(const std::string& query) const;
+    void executeParams(
+        const std::string& command,
+        const std::vector<std::optional<std::string>>& params) const;
+
     std::unique_ptr<PGconn, decltype(&PQfinish)> connection_;
 };
 
@@ -109,6 +113,42 @@ PostgresResult
     return PostgresResult(result.release());
 }
 
+void PostgresConnection::Impl::executeParams(
+    const std::string& command,
+    const std::vector<std::optional<std::string>>& params) const
+{
+    std::vector<const char*> values;
+    values.reserve(params.size());
+
+    for (const auto& param : params)
+    {
+        if (param.has_value())
+        {
+            values.push_back(param->c_str());
+        }
+        else
+        {
+            values.push_back(nullptr);
+        }
+    }
+
+    std::unique_ptr<PGresult, decltype(&PQclear)> result(
+        PQexecParams(connection_.get(), command.c_str(),
+                     static_cast<int>(params.size()), nullptr, values.data(),
+                     nullptr, nullptr, 0),
+        &PQclear);
+
+    if (!result)
+    {
+        throw std::runtime_error(PQerrorMessage(connection_.get()));
+    }
+
+    if (PQresultStatus(result.get()) != PGRES_COMMAND_OK)
+    {
+        throw std::runtime_error(PQresultErrorMessage(result.get()));
+    }
+}
+
 PostgresConnection::PostgresConnection(const std::string& connection_string) :
     impl_(std::make_unique<Impl>(connection_string))
 {}
@@ -123,6 +163,13 @@ void PostgresConnection::executeCommand(const std::string& command) const
 PostgresResult PostgresConnection::executeQuery(const std::string& query) const
 {
     return impl_->executeQuery(query);
+}
+
+void PostgresConnection::executeParams(
+    const std::string& command,
+    const std::vector<std::optional<std::string>>& params) const
+{
+    impl_->executeParams(command, params);
 }
 
 } // namespace app
