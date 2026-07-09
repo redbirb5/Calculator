@@ -16,7 +16,7 @@ void CalculationStorage::initialize()
             value1 INTEGER NOT NULL,
             value2 INTEGER,
             result INTEGER,
-            status INTEGER NOT NULL,
+            status INTEGER NOT NULL
         );
         )");
 }
@@ -58,7 +58,7 @@ std::vector<CalculationRecord> CalculationStorage::loadAll() const
 void CalculationStorage::save(const CalculationRecord& rec)
 {
     std::vector<std::optional<std::string>> params;
-    params.reserve(6);
+    params.reserve(5);
 
     params.push_back(operationToString(rec.request.operation));
     params.push_back(std::to_string(rec.request.value1));
@@ -77,7 +77,7 @@ void CalculationStorage::save(const CalculationRecord& rec)
             value1,
             value2,
             result,
-            status,
+            status
         )
         VALUES ($1, $2, $3, $4, $5);
     )",

@@ -137,8 +137,10 @@ inline std::string calculationStatusToString(CalculationStatus status)
             return "3";
         case CalculationStatus::TypeOverflow:
             return "4";
+        case CalculationStatus::UnknownCalculationError:
+            return "5";
         default:
-            return "unknown";
+            return "5";
     }
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "calculation_service.h"
 #include "calculation_types.h"
 #include "calculator.h"
 
@@ -19,7 +20,7 @@ class Parser
 class Printer
 {
   public:
-    void print(const Request& request, int result) const;
+    void print(const CalculationRecord& rec) const;
     void printHelp() const;
     void printError(const std::string& error_message) const;
 
@@ -30,13 +31,15 @@ class Printer
 class CalculatorApp
 {
   public:
+    CalculatorApp(std::string connection_string) :
+        calc_service_(connection_string)
+    {}
     int run(int argc, char** argv);
 
   private:
     bool isHelpRequested(int argc, char** argv) const;
     Parser json_parser_;
-    Calculator calculator_;
-    // CalculationService calc_service_;
+    CalculationService calc_service_;
     Printer printer_;
 };
 

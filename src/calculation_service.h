@@ -13,9 +13,14 @@ namespace app
 class CalculationService
 {
   public:
-    std::optional<CalculationRecord> execute(Request& req);
+    CalculationService(std::string connection_string);
+
+    CalculationRecord executeCalculation(Request& req);
 
   private:
+    CalculationStatus
+        calculationStatusFromLibMathException(const std::exception& error);
+
     CalculationCache cache_;
     Calculator calculator_;
     CalculationStorage storage_;

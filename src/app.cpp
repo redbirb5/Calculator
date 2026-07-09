@@ -43,19 +43,20 @@ Request Parser::parse(int argc, char** argv) const
     return req;
 }
 
-void Printer::print(const Request& req, int result) const
+void Printer::print(const CalculationRecord& rec) const
 {
-    if (req.operation == Operation::Factorial)
+    if (rec.request.operation == Operation::Factorial)
     {
-        std::cout << req.value1 << getOperationSymbol(req.operation) << " = "
-                  << result << "\n";
+        std::cout << rec.request.value1
+                  << getOperationSymbol(rec.request.operation) << " = "
+                  << rec.result.value() << "\n";
     }
     else
     {
-        std::cout << formatOperand(req.value1) << " "
-                  << getOperationSymbol(req.operation) << " "
-                  << formatOperand(req.value2.value()) << " = " << result
-                  << "\n";
+        std::cout << formatOperand(rec.request.value1) << " "
+                  << getOperationSymbol(rec.request.operation) << " "
+                  << formatOperand(rec.request.value2.value()) << " = "
+                  << rec.result.value() << "\n";
     }
 }
 
@@ -122,10 +123,20 @@ int CalculatorApp::run(int argc, char** argv)
     try
     {
         Request req = json_parser_.parse(argc, argv);
-        int result = calculator_.calculate(req);
-        Logger::instance().info("Calculation result: " +
-                                std::to_string(result));
-        printer_.print(req, result);
+        CalculationRecord rec = calc_service_.executeCalculation(req);
+        if (rec.status == CalculationStatus::Success)
+        {
+            Logger::instance().info("Calculation result: " +
+                                    std::to_string(rec.result.value()));
+            printer_.print(rec);
+        }
+        else
+        {
+            Logger::instance().error("Calculation status: " +
+                                     messageFromCalculationStatus(rec.status));
+            printer_.printError(messageFromCalculationStatus(rec.status));
+            return 1;
+        }
     }
     catch (const std::exception& error)
     {
