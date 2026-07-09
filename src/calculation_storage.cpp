@@ -17,7 +17,6 @@ void CalculationStorage::initialize()
             value2 INTEGER,
             result INTEGER,
             status INTEGER NOT NULL,
-            error_message TEXT NOT NULL DEFAULT ''
         );
         )");
 }
@@ -25,7 +24,7 @@ void CalculationStorage::initialize()
 std::vector<CalculationRecord> CalculationStorage::loadAll() const
 {
     PostgresResult result = p_connection_.executeQuery(R"(
-        SELECT operation, value1, value2, result, status, error_message
+        SELECT operation, value1, value2, result, status
         FROM calculations;
         )");
 
@@ -49,7 +48,6 @@ std::vector<CalculationRecord> CalculationStorage::loadAll() const
             c_rec.result = std::stoi(result.value(i, 3));
         }
         c_rec.status = calculationStatusFromString(result.value(i, 4));
-        c_rec.error_message = result.value(i, 5);
 
         records[i] = c_rec;
     }
@@ -72,7 +70,6 @@ void CalculationStorage::save(const CalculationRecord& rec)
                                       std::to_string(rec.result.value()))
                                 : std::nullopt);
     params.push_back(calculationStatusToString(rec.status));
-    params.push_back(rec.error_message);
 
     p_connection_.executeParams(R"(
         INSERT INTO calculations (
@@ -81,9 +78,8 @@ void CalculationStorage::save(const CalculationRecord& rec)
             value2,
             result,
             status,
-            error_message
         )
-        VALUES ($1, $2, $3, $4, $5, $6);
+        VALUES ($1, $2, $3, $4, $5);
     )",
                                 params);
 }

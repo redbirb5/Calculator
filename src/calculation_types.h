@@ -40,7 +40,6 @@ struct CalculationRecord
     Request request;
     std::optional<int> result;
     CalculationStatus status;
-    std::string error_message;
 };
 
 inline Operation operationFromString(const std::string& operation)
@@ -161,6 +160,25 @@ inline std::string getOperationSymbol(Operation oprt)
             return "!";
         default:
             throw std::invalid_argument("Unknown operation");
+    }
+}
+
+inline std::string messageFromCalculationStatus(CalculationStatus status)
+{
+    switch (status)
+    {
+        case CalculationStatus::Success:
+            return "Success";
+        case CalculationStatus::DivisionByZero:
+            return "Division by zero";
+        case CalculationStatus::NegativePower:
+            return "Raising to a negative power";
+        case CalculationStatus::NegativeFactorial:
+            return "Factorial of a negative number";
+        case CalculationStatus::TypeOverflow:
+            return "Type overflow";
+        default:
+            return "Unknown";
     }
 }
 
