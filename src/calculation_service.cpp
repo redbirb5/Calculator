@@ -14,7 +14,7 @@ CalculationService::CalculationService(std::string connection_string) :
     }
 }
 
-CalculationRecord CalculationService::executeCalculation(Request& req)
+CalculationRecord CalculationService::executeCalculation(const Request& req)
 {
     std::optional<CalculationRecord> cached_rec = cache_.find(req);
     if (cached_rec)

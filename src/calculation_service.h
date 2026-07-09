@@ -14,8 +14,7 @@ class CalculationService
 {
   public:
     CalculationService(std::string connection_string);
-
-    CalculationRecord executeCalculation(Request& req);
+    CalculationRecord executeCalculation(const Request& req);
 
   private:
     CalculationStatus
