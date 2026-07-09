@@ -123,6 +123,7 @@ int CalculatorApp::run(int argc, char** argv)
     try
     {
         Request req = json_parser_.parse(argc, argv);
+        calc_service_.initialize();
         CalculationRecord rec = calc_service_.executeCalculation(req);
         if (rec.status == CalculationStatus::Success)
         {

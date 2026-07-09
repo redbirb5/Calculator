@@ -4,6 +4,9 @@ namespace app
 {
 CalculationService::CalculationService(std::string connection_string) :
     storage_(connection_string)
+{}
+
+void CalculationService::initialize()
 {
     storage_.initialize();
     auto records = storage_.loadAll();
