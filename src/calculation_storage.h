@@ -19,7 +19,7 @@ class CalculationStorage
     void save(const CalculationRecord& rec);
 
   private:
-    PostgresConnection p_connection_;
+    PostgresConnection connection_;
 };
 
 } // namespace app

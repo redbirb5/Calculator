@@ -11,52 +11,52 @@ void CalculationService::initialize()
     storage_.initialize();
     auto records = storage_.loadAll();
 
-    for (const auto& rec : records)
+    for (const auto& record : records)
     {
-        cache_.add(rec);
+        cache_.add(record);
     }
 }
 
-CalculationRecord CalculationService::executeCalculation(const Request& req)
+CalculationRecord CalculationService::executeCalculation(const Request& request)
 {
-    std::optional<CalculationRecord> cached_rec = cache_.find(req);
-    if (cached_rec)
+    std::optional<CalculationRecord> cached_record = cache_.find(request);
+    if (cached_record)
     {
-        return cached_rec.value();
+        return cached_record.value();
     }
 
-    CalculationRecord rec;
-    rec.request = req;
+    CalculationRecord record;
+    record.request = request;
 
     try
     {
-        rec.result = calculator_.calculate(req);
-        rec.status = CalculationStatus::Success;
+        record.result = calculator_.calculate(request);
+        record.status = CalculationStatus::Success;
     }
-    catch (const std::exception& err)
+    catch (const std::exception& error)
     {
-        rec.result = std::nullopt;
-        rec.status = calculationStatusFromLibMathException(err);
+        record.result = std::nullopt;
+        record.status = calculationStatusFromLibMathException(error);
     }
 
-    cache_.add(rec);
-    storage_.save(rec);
+    storage_.save(record);
+    cache_.add(record);
 
-    return rec;
+    return record;
 }
 
 CalculationStatus CalculationService::calculationStatusFromLibMathException(
-    const std::exception& err)
+    const std::exception& error)
 {
-    const std::string msg = err.what();
+    const std::string message = error.what();
 
-    if (msg == "Division by zero")
+    if (message == "Division by zero")
         return CalculationStatus::DivisionByZero;
-    if (msg == "Raising to a negative power")
+    if (message == "Raising to a negative power")
         return CalculationStatus::NegativePower;
-    if (msg == "Factorial of a negative number")
+    if (message == "Factorial of a negative number")
         return CalculationStatus::NegativeFactorial;
-    if (msg == "Type overflow")
+    if (message == "Type overflow")
         return CalculationStatus::TypeOverflow;
 
     return CalculationStatus::UnknownCalculationError;

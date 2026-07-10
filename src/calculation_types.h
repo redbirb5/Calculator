@@ -144,9 +144,9 @@ inline std::string calculationStatusToString(CalculationStatus status)
     }
 }
 
-inline std::string getOperationSymbol(Operation oprt)
+inline std::string getOperationSymbol(Operation operation)
 {
-    switch (oprt)
+    switch (operation)
     {
         case Operation::Add:
             return "+";

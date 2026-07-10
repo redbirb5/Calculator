@@ -12,12 +12,12 @@ int main(int argc, char** argv)
     {
         const std::string connection_string =
             app::readConnectionString("config.json");
-        app::CalculatorApp calc(connection_string);
-        return calc.run(argc, argv);
+        app::CalculatorApp calc_app(connection_string);
+        return calc_app.run(argc, argv);
     }
-    catch (const std::exception& err)
+    catch (const std::exception& error)
     {
-        std::cerr << "Error! " << err.what() << "\n";
+        std::cerr << "Error! " << error.what() << "\n";
         return 1;
     }
 }

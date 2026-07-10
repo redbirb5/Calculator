@@ -11,11 +11,11 @@ namespace app
 class CalculationCache
 {
   public:
-    std::optional<CalculationRecord> find(const Request& req) const;
-    void add(CalculationRecord rec);
+    std::optional<CalculationRecord> find(const Request& request) const;
+    void add(CalculationRecord record);
 
   private:
-    std::string makeKey(const Request& req) const;
+    std::string makeKey(const Request& request) const;
     std::unordered_map<std::string, CalculationRecord> cache_map_;
 };
 

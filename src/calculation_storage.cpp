@@ -4,12 +4,12 @@ namespace app
 {
 
 CalculationStorage::CalculationStorage(const std::string& connection_string) :
-    p_connection_(connection_string)
+    connection_(connection_string)
 {}
 
 void CalculationStorage::initialize()
 {
-    p_connection_.executeCommand(R"(
+    connection_.executeCommand(R"(
         CREATE TABLE IF NOT EXISTS calculations (
             id SERIAL PRIMARY KEY,
             operation TEXT NOT NULL,
@@ -23,7 +23,7 @@ void CalculationStorage::initialize()
 
 std::vector<CalculationRecord> CalculationStorage::loadAll() const
 {
-    PostgresResult result = p_connection_.executeQuery(R"(
+    PostgresResult result = connection_.executeQuery(R"(
         SELECT operation, value1, value2, result, status
         FROM calculations;
         )");
@@ -55,23 +55,23 @@ std::vector<CalculationRecord> CalculationStorage::loadAll() const
     return records;
 }
 
-void CalculationStorage::save(const CalculationRecord& rec)
+void CalculationStorage::save(const CalculationRecord& record)
 {
     std::vector<std::optional<std::string>> params;
     params.reserve(5);
 
-    params.push_back(operationToString(rec.request.operation));
-    params.push_back(std::to_string(rec.request.value1));
-    params.push_back(rec.request.value2
+    params.push_back(operationToString(record.request.operation));
+    params.push_back(std::to_string(record.request.value1));
+    params.push_back(record.request.value2
                          ? std::optional<std::string>(
-                               std::to_string(rec.request.value2.value()))
+                               std::to_string(record.request.value2.value()))
                          : std::nullopt);
-    params.push_back(rec.result ? std::optional<std::string>(
-                                      std::to_string(rec.result.value()))
-                                : std::nullopt);
-    params.push_back(calculationStatusToString(rec.status));
+    params.push_back(record.result ? std::optional<std::string>(
+                                         std::to_string(record.result.value()))
+                                   : std::nullopt);
+    params.push_back(calculationStatusToString(record.status));
 
-    p_connection_.executeParams(R"(
+    connection_.executeParams(R"(
         INSERT INTO calculations (
             operation,
             value1,
@@ -81,7 +81,7 @@ void CalculationStorage::save(const CalculationRecord& rec)
         )
         VALUES ($1, $2, $3, $4, $5);
     )",
-                                params);
+                              params);
 }
 
 } // namespace app
