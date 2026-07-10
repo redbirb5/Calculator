@@ -9,6 +9,8 @@ CalculationStorage::CalculationStorage(const std::string& connection_string) :
 
 void CalculationStorage::initialize()
 {
+    connection_.executeCommand("SET client_min_messages TO warning;");
+
     connection_.executeCommand(R"(
         CREATE TABLE IF NOT EXISTS calculations (
             id SERIAL PRIMARY KEY,
