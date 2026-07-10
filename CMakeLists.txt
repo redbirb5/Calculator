@@ -84,6 +84,20 @@ target_link_libraries(calculator_tests
 include(GoogleTest)
 gtest_discover_tests(calculator_tests)
 
+find_program(VALGRIND_PATH valgrind)
+
+if(VALGRIND_PATH)
+    add_test(
+        NAME calculator_valgrind
+        COMMAND
+            ${VALGRIND_PATH}
+            --leak-check=full
+            --show-leak-kinds=all
+            --error-exitcode=1
+            $<TARGET_FILE:calculator_tests>
+    )
+endif()
+
 install(TARGETS calculator
 	RUNTIME DESTINATION /usr/local/bin
 )
