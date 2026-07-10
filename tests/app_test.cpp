@@ -19,7 +19,7 @@ class CalculatorAppTest : public testing::Test
 
 RunResult CalculatorAppTest::runApp(const char* argument)
 {
-    app::CalculatorApp calculator_app(app::readConnectionString("config.json"));
+    app::CalculatorApp calculator_app(app::readConnectionString("../config.json"));
 
     char* argv[] = {
         const_cast<char*>("calculator"),
