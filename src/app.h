@@ -2,31 +2,13 @@
 
 #include "calculation_service.h"
 #include "calculation_types.h"
-#include "calculator.h"
+#include "parser.h"
+#include "printer.h"
 
-#include <memory>
-#include <optional>
 #include <string>
 
 namespace app
 {
-
-class Parser
-{
-  public:
-    Request parse(int argc, char** argv) const;
-};
-
-class Printer
-{
-  public:
-    void print(const CalculationRecord& rec) const;
-    void printHelp() const;
-    void printError(const std::string& error_message) const;
-
-  private:
-    std::string formatOperand(int operand) const;
-};
 
 class CalculatorApp
 {

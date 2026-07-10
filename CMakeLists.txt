@@ -43,6 +43,7 @@ add_library(calculator_app
     src/calculation_storage.cpp
     src/postgres_connection.cpp
     src/config.cpp
+    src/parser.cpp
 )
 
 target_link_libraries(calculator_app
