@@ -68,5 +68,5 @@ vcpkg_installed/
 Testing/
 .cache/
 
-# congig file
+# config file
 config.json

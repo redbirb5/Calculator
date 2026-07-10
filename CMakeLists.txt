@@ -43,7 +43,7 @@ add_library(calculator_app
     src/config.cpp
     src/logger.cpp
     src/parser.cpp
-    src/postgres_connection.cpp   
+    src/postgres_connection.cpp
     src/printer.cpp
 )
 
