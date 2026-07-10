@@ -29,12 +29,12 @@ int CalculatorApp::run(int argc, char** argv)
         return 0;
     }
 
-    if (argc == 2)
-        Logger::instance().info(std::string("Calculation request received: ") +
-                                argv[1]);
-
     try
     {
+        if (argc == 2)
+            Logger::instance().info(
+                std::string("Calculation request received: ") + argv[1]);
+
         Request req = json_parser_.parse(argc, argv);
         calc_service_.initialize();
         CalculationRecord rec = calc_service_.executeCalculation(req);
@@ -46,7 +46,7 @@ int CalculatorApp::run(int argc, char** argv)
         }
         else
         {
-            Logger::instance().error("Calculation status: " +
+            Logger::instance().error("Calculation failed: " +
                                      messageFromCalculationStatus(rec.status));
             printer_.printError(messageFromCalculationStatus(rec.status));
             return 1;
