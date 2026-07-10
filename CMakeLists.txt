@@ -36,14 +36,15 @@ find_package(PostgreSQL REQUIRED)
 
 add_library(calculator_app
     src/app.cpp
-    src/calculator.cpp
-    src/logger.cpp
-    src/calculation_service.cpp
     src/calculation_cache.cpp
+    src/calculation_service.cpp
     src/calculation_storage.cpp
-    src/postgres_connection.cpp
+    src/calculator.cpp
     src/config.cpp
+    src/logger.cpp
     src/parser.cpp
+    src/postgres_connection.cpp   
+    src/printer.cpp
 )
 
 target_link_libraries(calculator_app
