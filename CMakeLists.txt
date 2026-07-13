@@ -32,9 +32,19 @@ FetchContent_MakeAvailable(
     spdlog
 )
 
+find_package(PostgreSQL REQUIRED)
+
 add_library(calculator_app
     src/app.cpp
+    src/calculation_cache.cpp
+    src/calculation_service.cpp
+    src/calculation_storage.cpp
+    src/calculator.cpp
+    src/config.cpp
     src/logger.cpp
+    src/parser.cpp
+    src/postgres_connection.cpp
+    src/printer.cpp
 )
 
 target_link_libraries(calculator_app
@@ -42,6 +52,7 @@ target_link_libraries(calculator_app
 	    math
         nlohmann_json::nlohmann_json
         spdlog::spdlog
+        PostgreSQL::PostgreSQL
 )
 
 target_include_directories(calculator_app
@@ -72,6 +83,20 @@ target_link_libraries(calculator_tests
 
 include(GoogleTest)
 gtest_discover_tests(calculator_tests)
+
+find_program(VALGRIND_PATH valgrind)
+
+if(VALGRIND_PATH)
+    add_test(
+        NAME calculator_valgrind
+        COMMAND
+            ${VALGRIND_PATH}
+            --leak-check=full
+            --show-leak-kinds=all
+            --error-exitcode=1
+            $<TARGET_FILE:calculator_tests>
+    )
+endif()
 
 install(TARGETS calculator
 	RUNTIME DESTINATION /usr/local/bin
